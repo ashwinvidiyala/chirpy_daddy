@@ -28,7 +28,6 @@ slack_client.on :message do |data|
             .take(10)
 
     tweets.each do |tweet|
-      # puts "#{tweet.user.screen_name}: #{tweet.text} \n"
       slack_client.web_client.chat_postMessage(
         channel: data.channel,
         text: "#{tweet.user.screen_name}: #{tweet.text}",
