@@ -12,7 +12,7 @@ slack_client.on :message do |data|
   case data.text
   when 'chirpy hi' then
     slack_client.web_client.chat_postMessage channel: data.channel, text: "Hi <@#{data.user}>!", as_user: true
-  when /^chirpy.#(.*)/ then
+  when /^chirpy.#(.*)$/ then
     slack_client.web_client.chat_postMessage channel: data.channel, text: "Your Hashtag is #{$1}!", as_user: true
   when /^chirpy/ then
     slack_client.web_client.chat_postMessage channel: data.channel, text: "Sorry <@#{data.user}>, what?", as_user: true
