@@ -1,7 +1,23 @@
-require 'slack-ruby-client'
+require          'slack-ruby-client'
+require          'twitter'
+
 require_relative 'slack_authorization'
+# require_relative 'twitter_authorization'
+
+twitter_client = Twitter::REST::Client.new do |config|
+  config.consumer_key         = ENV['TWITTER_CONSUMER_KEY']
+  config.consumer_secret      = ENV['TWITTER_CONSUMER_SECRET']
+  config.access_token         = ENV['TWITTER_ACCESS_TOKEN']
+  config.access_token_secret  = ENV['TWITTER_ACCESS_TOKEN_SECRET']
+end
 
 slack_client = Slack::RealTime::Client.new
+
+tweets = twitter_client.user_timeline('ashwinvidiyala', count: 2)
+
+tweets.each do |tweet|
+  puts tweet.text
+end
 
 slack_client.on :hello do
   puts "Successfully connected, welcome '#{slack_client.self.name}' to the '#{slack_client.team.name}' team at https://#{slack_client.team.domain}.slack.com."
@@ -27,4 +43,4 @@ slack_client.on :closed do |_data|
   puts "Client has disconnected successfully!"
 end
 
-slack_client.start!
+# slack_client.start!
