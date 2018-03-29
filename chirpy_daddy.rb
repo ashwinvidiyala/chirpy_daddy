@@ -1,5 +1,4 @@
 require 'slack-ruby-client'
-
 require_relative 'slack_authorization'
 
 slack_client = Slack::RealTime::Client.new
