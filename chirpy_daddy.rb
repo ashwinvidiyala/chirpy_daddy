@@ -13,12 +13,6 @@ end
 
 slack_client = Slack::RealTime::Client.new
 
-tweets = twitter_client.user_timeline('ashwinvidiyala', count: 2)
-
-tweets.each do |tweet|
-  puts tweet.text
-end
-
 slack_client.on :hello do
   puts "Successfully connected, welcome '#{slack_client.self.name}' to the '#{slack_client.team.name}' team at https://#{slack_client.team.domain}.slack.com."
 end
@@ -29,7 +23,19 @@ slack_client.on :message do |data|
   when 'chirpy hi' then
     slack_client.web_client.chat_postMessage channel: data.channel, text: "Hi <@#{data.user}>!", as_user: true
   when /^chirpy.#(.*)$/ then
-    slack_client.web_client.chat_postMessage channel: data.channel, text: "Your Hashtag is #{$1}!", as_user: true
+    tweets = twitter_client
+            .search("##{$1}", result_type: 'recent')
+            .take(10)
+
+    tweets.each do |tweet|
+      # puts "#{tweet.user.screen_name}: #{tweet.text} \n"
+      slack_client.web_client.chat_postMessage(
+        channel: data.channel,
+        text: "#{tweet.user.screen_name}: #{tweet.text}",
+        as_user: true
+      )
+    end
+
   when /^chirpy/ then
     slack_client.web_client.chat_postMessage channel: data.channel, text: "Sorry <@#{data.user}>, what?", as_user: true
   end
@@ -43,4 +49,4 @@ slack_client.on :closed do |_data|
   puts "Client has disconnected successfully!"
 end
 
-# slack_client.start!
+slack_client.start!
