@@ -22,9 +22,10 @@ slack_client.on :message do |data|
   case data.text
   when 'chirpy hi' then
     slack_client.web_client.chat_postMessage channel: data.channel, text: "Hi <@#{data.user}>!", as_user: true
+    
   when /^chirpy.#(.*)$/ then
     tweets = twitter_client
-            .search("##{$1}", result_type: 'recent')
+            .search("##{$1}", result_type: 'mixed')
             .take(10)
 
     tweets.each do |tweet|
